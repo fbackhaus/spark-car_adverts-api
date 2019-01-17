@@ -1,6 +1,8 @@
 package com.fbackhaus.sparkjavacars.services;
 
 import com.fbackhaus.sparkjavacars.domain.Car;
+import com.fbackhaus.sparkjavacars.exceptions.BadRequestException;
+import com.fbackhaus.sparkjavacars.exceptions.NotFoundException;
 import com.fbackhaus.sparkjavacars.persistence.CarRepository;
 
 import java.util.ArrayList;
@@ -9,6 +11,8 @@ import java.util.List;
 public class CarsService {
 
     private static volatile CarsService instance = null;
+    private static final String NOT_FOUND_MESSAGE = "Car with id %s not found";
+    private static final String BAD_REQUEST_MESSAGE = "The car with id %s already exists";
 
 
     private CarsService() {
@@ -28,20 +32,56 @@ public class CarsService {
                 .getCars());
     }
 
-    public void save(Car car) {
+    public void create(Car car) {
+        Car alreadySavedCar = CarRepository
+                .getInstance()
+                .getCarById(car.getId());
+
+        if (alreadySavedCar != null) {
+            throw new BadRequestException(String.format(BAD_REQUEST_MESSAGE, car.getId()));
+        }
+
         CarRepository.getInstance()
                 .save(car);
     }
 
     public Car getCarById(int id) {
-        return CarRepository.getInstance().getCarById(id);
+
+        Car car = CarRepository
+                .getInstance()
+                .getCarById(id);
+
+        if (car == null) {
+            throw new NotFoundException(String.format(NOT_FOUND_MESSAGE, id));
+        }
+        return car;
     }
 
     public void deleteCarById(int id) {
-        CarRepository.getInstance().deleteCarById(id);
+
+        Car car = CarRepository
+                .getInstance()
+                .getCarById(id);
+
+        if (car == null) {
+            throw new NotFoundException(String.format(NOT_FOUND_MESSAGE, id));
+        }
+
+        CarRepository
+                .getInstance()
+                .deleteCarById(id);
     }
 
-    public Car modifyCarById(Car updatedCar) {
-        return CarRepository.getInstance().modifyCarById(updatedCar);
+    public Car modifyCarById(int id) {
+        Car car = getCarById(id);
+        if (car == null) {
+            throw new NotFoundException(String.format(NOT_FOUND_MESSAGE, id));
+        }
+
+        CarRepository
+                .getInstance()
+                .save(car);
+
+        return car;
     }
 }

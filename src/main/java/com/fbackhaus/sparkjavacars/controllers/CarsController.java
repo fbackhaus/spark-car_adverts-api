@@ -1,45 +1,97 @@
 package com.fbackhaus.sparkjavacars.controllers;
 
 import com.fbackhaus.sparkjavacars.domain.Car;
+import com.fbackhaus.sparkjavacars.exceptions.BadRequestException;
+import com.fbackhaus.sparkjavacars.exceptions.NotFoundException;
 import com.fbackhaus.sparkjavacars.services.CarsService;
 import com.fbackhaus.sparkjavacars.utils.JsonUtils;
-import com.google.gson.Gson;
+import com.fbackhaus.sparkjavacars.utils.SortUtils;
+import com.fbackhaus.sparkjavacars.utils.ValidationUtils;
 import spark.Request;
 import spark.Response;
 
-import java.util.Optional;
+import javax.servlet.http.HttpServletResponse;
+import java.util.List;
+import java.util.Map;
 
 public class CarsController {
 
+    private static final String DELETE_MESSAGE_OK = "Car with id %s deleted successfully";
+    private static final String DEFAULT_SORT_CARS_FIELD = "id:asc";
+
     public static Object getCars(Request request, Response response) {
-        return CarsService.getInstance().getCars();
+        Map<String, String> params = ValidationUtils.parseQueryParamsMap(request.queryMap());
+        ValidationUtils.shouldProcess(params);
+        List<Car> cars = CarsService.getInstance().getCars();
+        String sortBy = params.get("sort");
+
+        if (params.isEmpty()) {
+            SortUtils.sortCarList(DEFAULT_SORT_CARS_FIELD, cars);
+        } else {
+            SortUtils.sortCarList(sortBy, cars);
+        }
+        return cars;
     }
 
-    public static Object saveCar(Request request, Response response) {
-        Car car = JsonUtils.toCar(request.body());
-        CarsService.getInstance().save(car);
+    public static Object createCar(Request request, Response response) {
+        Car car;
+        try {
+            ValidationUtils.validateCarAdvert(request.body());
+            car = JsonUtils.toCar(request.body());
+            CarsService.getInstance().create(car);
+        } catch (BadRequestException ex) {
+            response.status(HttpServletResponse.SC_BAD_REQUEST);
+            return ex.getResponseBody();
+        }
+
         return car;
     }
 
     public static Object getCarById(Request request, Response response) {
-        Optional<String> carId = Optional.ofNullable(request.params(":carId"));
-        return carId.map(s -> CarsService.getInstance().getCarById(Integer.parseInt(s))).orElse(null);
+        String carId = request.params(":carId");
+        Car car;
+        try {
+            ValidationUtils.validateCarId(carId);
+            car = CarsService.getInstance().getCarById(Integer.parseInt(carId));
+        } catch (BadRequestException ex) {
+            response.status(HttpServletResponse.SC_BAD_REQUEST);
+            return ex.getResponseBody();
+        } catch (NotFoundException ex) {
+            response.status(HttpServletResponse.SC_NOT_FOUND);
+            return ex.getResponseBody();
+        }
+
+        return car;
     }
 
     public static Object deleteCarById(Request request, Response response) {
-        Optional<String> carId = Optional.ofNullable(request.params(":carId"));
-        if (carId.isPresent()) {
-            CarsService.getInstance().deleteCarById(Integer.parseInt(carId.get()));
+        String carId = request.params(":carId");
+        try {
+            ValidationUtils.validateCarId(carId);
+            CarsService.getInstance().deleteCarById(Integer.parseInt(carId));
+        } catch (BadRequestException ex) {
+            response.status(HttpServletResponse.SC_BAD_REQUEST);
+            return ex.getResponseBody();
+        } catch (NotFoundException ex) {
+            response.status(HttpServletResponse.SC_NOT_FOUND);
+            return ex.getResponseBody();
         }
-        return "HOLIS";
+        return String.format(DELETE_MESSAGE_OK, carId);
     }
 
     public static Object modifyCar(Request request, Response response) {
-        Optional<String> carId = Optional.ofNullable(request.params(":carId"));
-        if (carId.isPresent()) {
-            Car updatedCar = JsonUtils.toCar(request.body());
-            CarsService.getInstance().modifyCarById(updatedCar);
+        String carId = request.params(":carId");
+        Car car;
+        try {
+            ValidationUtils.validateCarId(carId);
+            car = CarsService.getInstance().modifyCarById(Integer.parseInt(carId));
+        } catch (BadRequestException ex) {
+            response.status(HttpServletResponse.SC_BAD_REQUEST);
+            return ex.getResponseBody();
+        } catch (NotFoundException ex) {
+            response.status(HttpServletResponse.SC_NOT_FOUND);
+            return ex.getResponseBody();
         }
-        return "HOLIS";
+        return car;
     }
 }

@@ -79,12 +79,4 @@ public class CarRepository {
         carToDelete.setId(id);
         mapper.delete(carToDelete);
     }
-
-    public Car modifyCarById(Car updatedcar) {
-        Optional<Car> carOptional = Optional.ofNullable(getCarById(updatedcar.getId()));
-        if (carOptional.isPresent()) {
-            mapper.save(updatedcar);
-        }
-        return updatedcar;
-    }
 }

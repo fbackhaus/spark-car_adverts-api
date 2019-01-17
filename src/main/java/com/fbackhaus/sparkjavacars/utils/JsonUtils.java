@@ -1,16 +1,22 @@
 package com.fbackhaus.sparkjavacars.utils;
 
 import com.fbackhaus.sparkjavacars.domain.Car;
-import com.google.gson.*;
+import com.fbackhaus.sparkjavacars.persistence.adapters.LocalDateAdapter;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.JsonDeserializer;
 import spark.ResponseTransformer;
 
-import java.lang.reflect.Type;
 import java.time.LocalDate;
 
 public class JsonUtils {
 
     public static String toJson(Object object) {
-        return gson().toJson(object);
+        Gson gson = new GsonBuilder()
+                .setPrettyPrinting()
+                .registerTypeAdapter(LocalDate.class, new LocalDateAdapter())
+                .create();
+        return gson.toJson(object);
     }
 
     public static ResponseTransformer json() {
