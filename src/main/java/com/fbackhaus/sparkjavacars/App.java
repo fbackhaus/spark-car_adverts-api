@@ -12,7 +12,13 @@ public class App
 
         get("/cars", CarsController::getCars, json());
 
-        post("/car", CarsController::saveCar);
+        post("/car", CarsController::saveCar, json());
+
+        get("/car/:carId", CarsController::getCarById, json());
+
+        delete("/car/:carId", CarsController::deleteCarById, json());
+
+        put ("/car/:carId", CarsController::modifyCar, json());
 
     }
 }

@@ -32,4 +32,16 @@ public class CarsService {
         CarRepository.getInstance()
                 .save(car);
     }
+
+    public Car getCarById(int id) {
+        return CarRepository.getInstance().getCarById(id);
+    }
+
+    public void deleteCarById(int id) {
+        CarRepository.getInstance().deleteCarById(id);
+    }
+
+    public Car modifyCarById(Car updatedCar) {
+        return CarRepository.getInstance().modifyCarById(updatedCar);
+    }
 }

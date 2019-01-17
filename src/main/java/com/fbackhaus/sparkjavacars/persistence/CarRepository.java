@@ -10,6 +10,7 @@ import com.fbackhaus.sparkjavacars.domain.Car;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 public class CarRepository {
 
@@ -30,7 +31,7 @@ public class CarRepository {
                     mapper = new DynamoDBMapper(client);
                     try {
                         client.describeTable("Car");
-                    } catch(ResourceNotFoundException ex) {
+                    } catch (ResourceNotFoundException ex) {
                         createTable(client);
                     }
                 }
@@ -67,5 +68,23 @@ public class CarRepository {
     public List<Car> getCars() {
         DynamoDBScanExpression scanExpression = new DynamoDBScanExpression();
         return mapper.scan(Car.class, scanExpression);
+    }
+
+    public Car getCarById(int id) {
+        return mapper.load(Car.class, id);
+    }
+
+    public void deleteCarById(int id) {
+        Car carToDelete = new Car();
+        carToDelete.setId(id);
+        mapper.delete(carToDelete);
+    }
+
+    public Car modifyCarById(Car updatedcar) {
+        Optional<Car> carOptional = Optional.ofNullable(getCarById(updatedcar.getId()));
+        if (carOptional.isPresent()) {
+            mapper.save(updatedcar);
+        }
+        return updatedcar;
     }
 }
