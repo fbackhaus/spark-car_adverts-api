@@ -1,6 +1,6 @@
 package com.fbackhaus.sparkjavacars.utils;
 
-import com.fbackhaus.sparkjavacars.domain.Car;
+import com.fbackhaus.sparkjavacars.domain.CarAdvert;
 import com.fbackhaus.sparkjavacars.persistence.adapters.LocalDateAdapter;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -23,8 +23,8 @@ public class JsonUtils {
         return JsonUtils::toJson;
     }
 
-    public static Car toCar(String body) {
-        return gson().fromJson(body, Car.class);
+    public static CarAdvert toCarAdvert(String body) {
+        return gson().fromJson(body, CarAdvert.class);
     }
 
     private static Gson gson() {

@@ -4,6 +4,7 @@ import com.fbackhaus.sparkjavacars.exceptions.BadRequestException;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import spark.QueryParamsMap;
+import spark.utils.StringUtils;
 
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -11,8 +12,8 @@ import java.util.stream.Stream;
 
 public class ValidationUtils {
 
-    private static final String[] basicFields = {"id", "title", "fuel", "price"};
-    private static final String[] usedCarsFields = {"mileage", "firstRegistration"};
+    private static final String[] basicFields = {"id", "title", "fuel", "price", "new"};
+    private static final String[] usedCarsFields = {"mileage", "first_registration"};
     public static final String BAD_REQUEST_MESSAGE = "Please check your parameters";
 
     public static void validateCarAdvert(String body) {
@@ -22,6 +23,11 @@ public class ValidationUtils {
     }
 
     private static boolean isValid(String body) {
+
+        if(StringUtils.isEmpty(body)) {
+            return false;
+        }
+
         JsonParser parser = new JsonParser();
         JsonObject jsonObject = parser.parse(body).getAsJsonObject();
 
@@ -47,10 +53,10 @@ public class ValidationUtils {
     }
 
     private static boolean isNewCar(JsonObject carAdvert) {
-        return carAdvert.get("isNew").getAsBoolean();
+        return carAdvert.get("new").getAsBoolean();
     }
 
-    public static void validateCarId(String id) {
+    public static void validateCarAdvertId(String id) {
         try {
             Integer.parseInt(id);
         } catch (NumberFormatException e) {

@@ -1,25 +1,34 @@
 package com.fbackhaus.sparkjavacars;
 
-import com.fbackhaus.sparkjavacars.controllers.CarsController;
+import com.fbackhaus.sparkjavacars.controllers.CarAdvertsController;
+import com.fbackhaus.sparkjavacars.utils.PersistenceUtils;
+import spark.Spark;
 
 import static com.fbackhaus.sparkjavacars.utils.JsonUtils.json;
 import static spark.Spark.*;
 
 
 public class App {
+
     public static void main(String[] args) {
+
+        Spark.port(8080);
+
+        PersistenceUtils.init();
+
+        Spark.awaitInitialization();
 
         before((request, response) -> response.type("application/json"));
 
-        get("/cars", CarsController::getCars, json());
+        get("/car-adverts", CarAdvertsController::getCarAdverts, json());
 
-        post("/car", CarsController::createCar, json());
+        post("/car-adverts", CarAdvertsController::createCarAdvert, json());
 
-        get("/car/:carId", CarsController::getCarById, json());
+        get("/car-adverts/:carAdvertId", CarAdvertsController::getCarAdvertById, json());
 
-        delete("/car/:carId", CarsController::deleteCarById, json());
+        delete("/car-adverts/:carAdvertId", CarAdvertsController::deleteCarAdvertById, json());
 
-        put("/car/:carId", CarsController::modifyCar, json());
+        put("/car-adverts/:carAdvertId", CarAdvertsController::modifyCarAdvert, json());
 
         notFound((req, res) -> "{\"message\":\"Resource not found\", \"status\": 404}");
 

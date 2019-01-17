@@ -1,6 +1,6 @@
 package com.fbackhaus.sparkjavacars.utils;
 
-import com.fbackhaus.sparkjavacars.domain.Car;
+import com.fbackhaus.sparkjavacars.domain.CarAdvert;
 
 import java.util.Collections;
 import java.util.Comparator;
@@ -8,25 +8,25 @@ import java.util.List;
 
 public class SortUtils {
 
-    public static void sortCarList(String field, List<Car> cars) {
+    public static void sortCarList(String field, List<CarAdvert> carAdverts) {
         String[] sortArray = field.split(":");
         switch (sortArray[0]) {
             case "id":
-                cars.sort(Comparator.comparing(Car::getId));
+                carAdverts.sort(Comparator.comparing(CarAdvert::getId));
                 break;
             case "title":
-                cars.sort(Comparator.comparing(Car::getTitle));
+                carAdverts.sort(Comparator.comparing(CarAdvert::getTitle));
                 break;
             case "fuel":
-                cars.sort(Comparator.comparing(Car::getFuel));
+                carAdverts.sort(Comparator.comparing(CarAdvert::getFuel));
                 break;
             case "price":
-                cars.sort(Comparator.comparing(Car::getPrice));
+                carAdverts.sort(Comparator.comparing(CarAdvert::getPrice));
                 break;
         }
 
         if ("desc".equalsIgnoreCase(sortArray[1])) {
-            Collections.reverse(cars);
+            Collections.reverse(carAdverts);
         }
     }
 }
