@@ -95,7 +95,7 @@ DELETE /car-adverts/${id}
 You must add the id as a param, to indicate which advert you want to delete here too.
 **Very important**: if you want to delete a non existant car advert, you'll receive a Bad Request Error.
 
-### Tests
+## Tests
 ```bash
 $ mvn test
 ```
