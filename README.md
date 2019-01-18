@@ -31,6 +31,8 @@ $ mvn clean compile package -P development
 $ mvn exec:java
 ```
 
+**Very important**: the app runs on port 8080.
+
 ## Create a new car advert
 
 ```
