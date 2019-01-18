@@ -16,6 +16,8 @@ public class App {
 
         PersistenceUtils.init();
 
+        Spark.init();
+
         Spark.awaitInitialization();
 
         before((request, response) -> response.type("application/json"));

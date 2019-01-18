@@ -65,13 +65,12 @@ public class CarAdvertsService {
                 .deleteCarAdvertById(id);
     }
 
-    public CarAdvert modifyCarById(int id) {
-        CarAdvert carAdvert = getCarAdvertById(id);
+    public void modifyCarById(CarAdvert modifiedCarAdvert) {
+
+        getCarAdvertById(modifiedCarAdvert.getId());
 
         CarAdvertRepository
                 .getInstance()
-                .save(carAdvert);
-
-        return carAdvert;
+                .save(modifiedCarAdvert);
     }
 }

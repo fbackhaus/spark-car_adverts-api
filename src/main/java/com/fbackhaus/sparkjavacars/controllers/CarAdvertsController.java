@@ -16,13 +16,15 @@ import java.util.Map;
 
 public class CarAdvertsController {
 
-    private static final String DELETE_MESSAGE_OK = "CarAdvert with id %s deleted successfully";
+    private static final String DELETE_MESSAGE_OK = "Car Advert with id %s deleted successfully";
+    private static final String UPDATE_MESSAGE_OK = "Car Advert with id %s updated successfully";
     private static final String DEFAULT_SORT_CARS_FIELD = "id:asc";
 
     public static Object getCarAdverts(Request request, Response response) {
         Map<String, String> params = ValidationUtils.parseQueryParamsMap(request.queryMap());
         ValidationUtils.shouldProcess(params);
-        List<CarAdvert> carAdverts = CarAdvertsService.getInstance().getCarAdverts();
+        List<CarAdvert> carAdverts = CarAdvertsService.getInstance()
+                .getCarAdverts();
         String sortBy = params.get("sort");
 
         if (params.isEmpty()) {
@@ -38,7 +40,10 @@ public class CarAdvertsController {
         try {
             ValidationUtils.validateCarAdvert(request.body());
             carAdvert = JsonUtils.toCarAdvert(request.body());
-            CarAdvertsService.getInstance().createCarAdvert(carAdvert);
+
+            CarAdvertsService.getInstance()
+                    .createCarAdvert(carAdvert);
+
         } catch (BadRequestException ex) {
             response.status(HttpServletResponse.SC_BAD_REQUEST);
             return ex.getResponseBody();
@@ -52,7 +57,10 @@ public class CarAdvertsController {
         CarAdvert carAdvert;
         try {
             ValidationUtils.validateCarAdvertId(carAdvertId);
-            carAdvert = CarAdvertsService.getInstance().getCarAdvertById(Integer.parseInt(carAdvertId));
+
+            carAdvert = CarAdvertsService.getInstance()
+                    .getCarAdvertById(Integer.parseInt(carAdvertId));
+
         } catch (BadRequestException ex) {
             response.status(HttpServletResponse.SC_BAD_REQUEST);
             return ex.getResponseBody();
@@ -68,7 +76,10 @@ public class CarAdvertsController {
         String carAdvertId = request.params(":carAdvertId");
         try {
             ValidationUtils.validateCarAdvertId(carAdvertId);
-            CarAdvertsService.getInstance().deleteCarAdvertById(Integer.parseInt(carAdvertId));
+
+            CarAdvertsService.getInstance()
+                    .deleteCarAdvertById(Integer.parseInt(carAdvertId));
+
         } catch (BadRequestException ex) {
             response.status(HttpServletResponse.SC_BAD_REQUEST);
             return ex.getResponseBody();
@@ -81,10 +92,14 @@ public class CarAdvertsController {
 
     public static Object modifyCarAdvert(Request request, Response response) {
         String carAdvertId = request.params(":carAdvertId");
-        CarAdvert carAdvert;
         try {
             ValidationUtils.validateCarAdvertId(carAdvertId);
-            carAdvert = CarAdvertsService.getInstance().modifyCarById(Integer.parseInt(carAdvertId));
+            ValidationUtils.validateCarAdvert(request.body());
+            CarAdvert modifiedCarAdvert = JsonUtils.toCarAdvert(request.body());
+
+            CarAdvertsService.getInstance()
+                    .modifyCarById(modifiedCarAdvert);
+
         } catch (BadRequestException ex) {
             response.status(HttpServletResponse.SC_BAD_REQUEST);
             return ex.getResponseBody();
@@ -92,6 +107,6 @@ public class CarAdvertsController {
             response.status(HttpServletResponse.SC_NOT_FOUND);
             return ex.getResponseBody();
         }
-        return carAdvert;
+        return String.format(UPDATE_MESSAGE_OK, carAdvertId);
     }
 }
