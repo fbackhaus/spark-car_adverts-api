@@ -26,11 +26,11 @@ public class App {
 
         post("/car-adverts", CarAdvertsController::createCarAdvert, json());
 
-        get("/car-adverts/:carAdvertId", CarAdvertsController::getCarAdvertById, json());
+        get("/car-adverts/:id", CarAdvertsController::getCarAdvertById, json());
 
-        delete("/car-adverts/:carAdvertId", CarAdvertsController::deleteCarAdvertById, json());
+        delete("/car-adverts/:id", CarAdvertsController::deleteCarAdvertById, json());
 
-        put("/car-adverts/:carAdvertId", CarAdvertsController::modifyCarAdvert, json());
+        put("/car-adverts/:id", CarAdvertsController::modifyCarAdvert, json());
 
         notFound((req, res) -> "{\"message\":\"Resource not found\", \"status\": 404}");
 

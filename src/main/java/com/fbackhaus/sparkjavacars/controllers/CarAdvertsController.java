@@ -53,7 +53,7 @@ public class CarAdvertsController {
     }
 
     public static Object getCarAdvertById(Request request, Response response) {
-        String carAdvertId = request.params(":carAdvertId");
+        String carAdvertId = request.params(":id");
         CarAdvert carAdvert;
         try {
             ValidationUtils.validateCarAdvertId(carAdvertId);
@@ -73,7 +73,7 @@ public class CarAdvertsController {
     }
 
     public static Object deleteCarAdvertById(Request request, Response response) {
-        String carAdvertId = request.params(":carAdvertId");
+        String carAdvertId = request.params(":id");
         try {
             ValidationUtils.validateCarAdvertId(carAdvertId);
 
@@ -91,7 +91,7 @@ public class CarAdvertsController {
     }
 
     public static Object modifyCarAdvert(Request request, Response response) {
-        String carAdvertId = request.params(":carAdvertId");
+        String carAdvertId = request.params(":id");
         try {
             ValidationUtils.validateCarAdvertId(carAdvertId);
             ValidationUtils.validateCarAdvert(request.body());
