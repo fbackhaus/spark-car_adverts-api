@@ -23,6 +23,9 @@ public class SortUtils {
             case "price":
                 carAdverts.sort(Comparator.comparing(CarAdvert::getPrice));
                 break;
+            case "new":
+                carAdverts.sort(Comparator.comparing(CarAdvert::isNew));
+                break;
         }
 
         if ("desc".equalsIgnoreCase(sortArray[1])) {
